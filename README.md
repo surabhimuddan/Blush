@@ -1,4 +1,4 @@
-# 🐟 Blush — your website guide fish
+# 🐟 Blush — Your Co-Browsing Koi
 **Shared 21 · wHACKiest 2026 · Track 2 — Beyond the Browser**
 Prarthana had the instructions open during a Google Cloud Arcade lab and still couldn’t find the button she needed. Blush is our idea for that moment. Tell her what you want to do, and a tiny pink pixel fish swims over to the next control. You make the click. Blush checks what happened and remembers the steps once the task succeeds.
 **Project stage:** Hackathon prototype in development. We tested the starter’s local shop page and mock API response. The full Chrome-to-AWS flow, voice, and cross-profile replay are planned demo milestones. Our walkthrough video illustrates the intended experience.
