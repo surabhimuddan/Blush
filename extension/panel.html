@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KoiPilot</title>
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <main>
+    <h1>KoiPilot</h1>
+
+    <form id="goal-form">
+      <label for="goal">What do you want to do?</label>
+      <input id="goal" name="goal" placeholder="Find the return policy" required>
+      <button id="start" type="submit" disabled>Start</button>
+    </form>
+
+    <section aria-labelledby="guidance-title">
+      <h2 id="guidance-title">Blush’s guidance</h2>
+      <p id="hint" role="status">Waiting to start.</p>
+      <button id="repeat" type="button" disabled>Repeat hint</button>
+      <button id="stop" type="button" disabled>Stop</button>
+    </section>
+
+    <p>Planning calls: <output id="planning-calls">0</output></p>
+    <p>Verified runs: <output id="verified-runs">0</output></p>
+  </main>
+</body>
+</html>
