@@ -1,0 +1,12 @@
+{
+	"name": "koipilot-backend",
+	"main": "index.mjs",
+	"compatibility_date": "2026-11-25",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "koipilot-routes",
+			"database_id": "f371be7e-8e2c-4080-ba85-99b3ee39ce92"
+		}
+	]
+}
