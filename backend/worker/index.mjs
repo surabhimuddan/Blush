@@ -1,24 +1,107 @@
 import { planReturnsStep } from "./planner.mjs";
 import { countPlannerCall, handleRoutes, validRunId } from "./routes.mjs";
 
+const POST_ENDPOINTS = new Set(["/ask", "/next", "/path", "/complete"]);
+
+async function answerQuestion(body, apiKey) {
+  const question = typeof body?.question === "string" ? body.question.trim() : "";
+
+  if (!question || question.length > 300) {
+    return Response.json(
+      { error: "Enter a question up to 300 characters." },
+      { status: 400 },
+    );
+  }
+
+  if (!apiKey) {
+    return Response.json(
+      { error: "Question answering is unavailable." },
+      { status: 503 },
+    );
+  }
+
+  const site = typeof body.site === "string" ? body.site.slice(0, 253) : "";
+
+  try {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      signal: AbortSignal.timeout(10000),
+      body: JSON.stringify({
+        model: "openai/gpt-oss-20b",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Answer the user's question directly in simple language. " +
+              "Use the site name as optional context. " +
+              "If the answer depends on details of the current page, " +
+              "say what information you need and avoid guessing what the page shows.",
+          },
+          {
+            role: "user",
+            content: JSON.stringify({ question, site }),
+          },
+        ],
+      }),
+    });
+
+    if (response.status === 429) {
+      return Response.json(
+        { error: "Groq is busy. Try again shortly." },
+        { status: 429 },
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error("Groq request failed");
+    }
+
+    const data = await response.json();
+    const answer = data.choices?.[0]?.message?.content;
+
+    if (typeof answer !== "string" || !answer.trim()) {
+      throw new Error("Groq returned an empty answer");
+    }
+
+    return Response.json({ answer: answer.trim() });
+  } catch {
+    return Response.json(
+      { error: "Could not answer the question. Try again." },
+      { status: 502 },
+    );
+  }
+}
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
 
-      if (request.method !== "POST" || !["/next", "/path", "/complete"].includes(pathname)) {
+    if (request.method === "GET" && pathname === "/health") {
       return Response.json({ ok: true });
     }
 
-    if (request.method !== "POST" || pathname !== "/next") {
+    if (request.method !== "POST" || !POST_ENDPOINTS.has(pathname)) {
       return Response.json({ error: "Unknown endpoint" }, { status: 404 });
     }
 
-    if (!env.DEMO_TOKEN || request.headers.get("Authorization") !== `Bearer ${env.DEMO_TOKEN}`) {
+    if (
+      !env.DEMO_TOKEN ||
+      request.headers.get("Authorization") !== `Bearer ${env.DEMO_TOKEN}`
+    ) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json().catch(() => null);
-        if (pathname !== "/next") {
+
+    if (pathname === "/ask") {
+      return answerQuestion(body, env.GROQ_API_KEY);
+    }
+
+    if (pathname === "/path" || pathname === "/complete") {
       try {
         return await handleRoutes(pathname, env.DB, body);
       } catch {
@@ -60,7 +143,7 @@ export default {
       return Response.json({ error: "Planner is unavailable" }, { status: 503 });
     }
 
-      try {
+    try {
       const planningCalls = await countPlannerCall(env.DB, body.runId);
       const step = await planReturnsStep(env.GROQ_API_KEY, controls);
       return Response.json({ ...step, source: "planner", planningCalls });
