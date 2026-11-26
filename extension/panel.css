@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f7f4fc;
+  color: #252038;
+  font: 16px/1.5 system-ui, sans-serif;
+}
+
+main {
+  max-width: 440px;
+  margin-inline: auto;
+  padding: 20px 16px;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+}
+
+form,
+section {
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid #ded6eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+form {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input,
+button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #ada1bf;
+  border-radius: 8px;
+  font: inherit;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+}
+
+button {
+  background: #fff;
+  color: #442477;
+}
+
+#start {
+  background: #6039a6;
+  color: #fff;
+}
+
+button:disabled,
+#start:disabled {
+  background: #eee9f5;
+  color: #61566f;
+}
+
+:focus-visible {
+  outline: 3px solid #6039a6;
+  outline-offset: 2px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+#hint {
+  margin: 8px 0 12px;
+}
+
+#planning-calls,
+#verified-runs {
+  font-weight: 700;
+}
