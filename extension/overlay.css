@@ -1,0 +1,134 @@
+/* KoiPilot overlay. Lives inside a closed Shadow DOM, so page CSS can't touch it. */
+:host { all: initial; }
+
+.kp-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.kp-layer, .kp-layer * {
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Dashed ring and dot trail */
+.kp-fx {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.kp-ring {
+  fill: none;
+  stroke: #E39AC4;
+  stroke-width: 4;
+  stroke-dasharray: 14 10;
+  opacity: 0;
+}
+.kp-trail circle { fill: #E39AC4; }
+
+/* Blush: position (fish) → tilt → canvas (body wave, fins, flip) */
+.kp-fish {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 84px;
+  height: 36px;
+  will-change: transform;
+}
+.kp-tilt {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+}
+
+/* Blush is drawn on a canvas by overlay.js (body wave, fins, pitch, 3D turn). Her layout
+   box is 84×36; the 104×104 canvas is centred on it so she can pitch without clipping. */
+.kp-canvas {
+  position: absolute;
+  left: -10px;
+  top: -34px;
+  width: 104px;
+  height: 104px;
+  image-rendering: pixelated;
+}
+
+/* Soft shadow on the page below her (position, width and opacity set by overlay.js). */
+.kp-shadow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 64px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(74, 42, 79, 0.30), rgba(74, 42, 79, 0.12) 60%, rgba(74, 42, 79, 0));
+  filter: blur(2px);
+  will-change: transform;
+}
+
+/* Game-style speech bubble */
+.kp-bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: max-content;
+  max-width: 220px;
+  padding: 7px 10px;
+  background: #FFFFFF;
+  border: 5px solid #4A2A4F;
+  border-radius: 10px;
+  box-shadow: 0 6px 0 rgba(74, 42, 79, 0.16), 0 12px 26px rgba(74, 42, 79, 0.24);
+  color: #4A2A4F;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  transform: scale(0.85);
+  transform-origin: var(--kp-origin, 50% 100%);
+  transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+}
+.kp-bubble.show {
+  opacity: 1;
+  transform: scale(1);
+}
+.kp-rest { visibility: hidden; } /* untyped text keeps the bubble's final size */
+.kp-tail {
+  position: absolute;
+  width: 25px;
+  height: 15px;
+  overflow: visible;
+}
+
+/* Celebration sparkles: little pixel plus signs */
+.kp-sparkle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  background: #FFD95A;
+  box-shadow: 6px 0 #FFD95A, -6px 0 #FFD95A, 0 6px #FFD95A, 0 -6px #FFD95A;
+  animation: kp-sparkle 0.9s ease-out forwards;
+}
+.kp-sparkle.pink {
+  background: #E39AC4;
+  box-shadow: 6px 0 #E39AC4, -6px 0 #E39AC4, 0 6px #E39AC4, 0 -6px #E39AC4;
+}
+@keyframes kp-sparkle {
+  0%   { transform: translate(0, 0) scale(0.3); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kp-bubble { transition: none; }
+  .kp-sparkle { display: none; }
+}
