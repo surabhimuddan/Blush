@@ -1,0 +1,11 @@
+/* Blush swim animation: drop into overlay.css (inside the Shadow DOM) */
+.blush {
+  width: 132px;            /* half of one frame (264px), keeps pixels crisp */
+  height: 88px;            /* half of 176px */
+  background: url("assets/blush-swim-sheet.png") 0 0 / 2112px 88px no-repeat; /* 16 frames x 132px */
+  image-rendering: pixelated;
+  animation: blush-tail 0.75s steps(16) infinite;   /* idle: ~1.3 tail beats/s */
+}
+.blush.swimming { animation-duration: 0.38s; }      /* moving: ~2.6 beats/s */
+.blush.flip { transform: scaleX(-1); }              /* facing left */
+@keyframes blush-tail { to { background-position: -2112px 0; } }
